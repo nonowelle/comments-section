@@ -24,5 +24,25 @@ export default {
 <style>
 body {
   background-color: hsl(223, 19%, 93%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 90px;
+
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.attribution {
+  position: absolute;
+  top: 90%;
+
+  display: flex;
+  justify-content: center;
+
+  width: 50%;
 }
 </style>
