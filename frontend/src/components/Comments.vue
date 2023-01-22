@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="comment-card">
+    <div v-for="comment in comments" :key="comment.div" class="comment-card">
       <div class="comment-vote">
         <div class="comment-vote-cta">
           <div class="plus" v-on:click="addVote">
@@ -11,7 +11,7 @@
               />
             </svg>
           </div>
-          <div class="vote-number">{{ this.vote }}</div>
+          <div class="vote-number">{{ comment.score }}</div>
           <div class="minus" v-on:click="removeVote">
             <svg width="11" height="3" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -27,8 +27,8 @@
           <div class="comment-picture info">
             <img src="../../../images/avatars/image-juliusomo.png" alt="" />
           </div>
-          <div class="comment-author info">juliusomo</div>
-          <div class="comment-date info">Last Month</div>
+          <div class="comment-author info">{{ comment.user.userName }}</div>
+          <div class="comment-date info">{{ comment.createdAt }}</div>
           <div class="comment-reply-cta info" v-on:click="openReplyBox">
             <svg width="14" height="13" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -40,9 +40,7 @@
           </div>
         </div>
         <div class="comment-text">
-          I couldn't agree more with this. Everything moves so fast and it
-          always seems like everyone knows the newest library/framework. But the
-          fundamentals are what stay constant.
+          {{ comment.content }}
         </div>
       </div>
     </div>
@@ -57,13 +55,14 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Comment',
   data: function () {
     return {
       replyBoxIsOpened: false,
-      initialVote: 24,
-      vote: 24,
+
+      comments: [],
     };
   },
 
@@ -80,15 +79,27 @@ export default {
       this.closeComment();
     },
     addVote() {
-      if (this.vote === this.initialVote) {
-        this.vote = this.vote + 1;
+      if (this.comment.score === this.initialVote) {
+        this.comment.score = this.comment.score + 1;
       }
     },
     removeVote() {
-      if (this.vote === this.initialVote + 1) {
-        this.vote = this.vote - 1;
+      if (this.comment.score === this.initialVote + 1) {
+        this.comment.score = this.comment.score - 1;
       }
     },
+    async getComments() {
+      try {
+        const response = await axios.get('http://localhost:3000/');
+        this.comments = response.data;
+        console.log(this.comments);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
+  created() {
+    this.getComments();
   },
 };
 </script>

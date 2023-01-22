@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Comment msg="Welcome to Your Vue.js App" />
+    <Comments msg="Welcome to Your Vue.js App" />
     <div class="attribution">
       Challenge by
       <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import Comment from './components/Comment.vue';
+import Comments from './components/Comments.vue';
 
 export default {
   name: 'App',
   components: {
-    Comment,
+    Comments,
   },
 };
 </script>
@@ -43,6 +43,6 @@ body {
   display: flex;
   justify-content: center;
 
-  width: 50%;
+  width: 100%;
 }
 </style>
