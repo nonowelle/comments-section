@@ -87,7 +87,7 @@ export default {
         const reply = await axios.post('http://localhost:3000/', {
           comment_content: this.reply.content,
           comment_userName: 'nonowelle',
-          comment_replyTo: this.comment.user.userName,
+          comment_replyTo: this.comment.user.username,
         });
         console.log(reply);
       } catch (err) {

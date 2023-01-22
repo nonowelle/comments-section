@@ -25,6 +25,7 @@ app.get('/', async (req, res) => {
   res.json(comments);
 });
 app.post('/', async (req, res) => {
+  console.log(req.body);
   //trouver a quel comment on repond
   //ajouter un object dans le array replies de ce comment
   //save the reply
