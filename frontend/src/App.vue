@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <Comments msg="Welcome to Your Vue.js App" />
+    <Comments
+      v-for="comment in comments"
+      :key="comment.id"
+      :comment="comment"
+    />
     <div class="attribution">
       Challenge by
       <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
@@ -12,11 +16,31 @@
 
 <script>
 import Comments from './components/Comments.vue';
-
+import axios from 'axios';
 export default {
   name: 'App',
+  data() {
+    return {
+      comments: [],
+    };
+  },
   components: {
     Comments,
+  },
+
+  methods: {
+    async getComments() {
+      try {
+        const response = await axios.get('http://localhost:3000/');
+        this.comments = response.data;
+        console.log(this.comments);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
+  created() {
+    this.getComments();
   },
 };
 </script>

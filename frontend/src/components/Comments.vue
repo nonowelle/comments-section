@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="comment in comments" :key="comment.div" class="comment-card">
+    <div class="comment-card">
       <div class="comment-vote">
         <div class="comment-vote-cta">
           <div class="plus" v-on:click="addVote">
@@ -11,7 +11,7 @@
               />
             </svg>
           </div>
-          <div class="vote-number">{{ comment.score }}</div>
+          <div class="vote-number">{{ score }}</div>
           <div class="minus" v-on:click="removeVote">
             <svg width="11" height="3" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -27,7 +27,7 @@
           <div class="comment-picture info">
             <img src="../../../images/avatars/image-juliusomo.png" alt="" />
           </div>
-          <div class="comment-author info">{{ comment.user.userName }}</div>
+          <div class="comment-author info">{{ comment.user.username }}</div>
           <div class="comment-date info">{{ comment.createdAt }}</div>
           <div class="comment-reply-cta info" v-on:click="openReplyBox">
             <svg width="14" height="13" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +48,7 @@
       <div class="comment-picture">
         <img src="../../../images/avatars/image-juliusomo.png" alt="" />
       </div>
-      <input type="text" />
+      <input type="text" v-model="reply.content" />
       <button v-on:click="saveCommentAndClose">REPLY</button>
     </div>
   </div>
@@ -58,11 +58,23 @@
 import axios from 'axios';
 export default {
   name: 'Comment',
+  props: {
+    comment: Object,
+  },
   data: function () {
     return {
       replyBoxIsOpened: false,
-
-      comments: [],
+      score: null,
+      reply: {
+        id: Number,
+        content: '',
+        createdAt: '',
+        score: 0,
+        replyingTo: this.comment.user.username,
+        user: {
+          username: '',
+        },
+      },
     };
   },
 
@@ -70,7 +82,18 @@ export default {
     openReplyBox() {
       this.replyBoxIsOpened = true;
     },
-    saveComment() {},
+    async saveComment() {
+      try {
+        const reply = await axios.post('http://localhost:3000/', {
+          comment_content: this.reply.content,
+          comment_userName: 'nonowelle',
+          comment_replyTo: this.comment.user.userName,
+        });
+        console.log(reply);
+      } catch (err) {
+        console.log(err);
+      }
+    },
     closeComment() {
       this.replyBoxIsOpened = false;
     },
@@ -79,27 +102,19 @@ export default {
       this.closeComment();
     },
     addVote() {
-      if (this.comment.score === this.initialVote) {
-        this.comment.score = this.comment.score + 1;
+      if (this.comment.score === this.score) {
+        this.score = this.score + 1;
       }
     },
     removeVote() {
-      if (this.comment.score === this.initialVote + 1) {
-        this.comment.score = this.comment.score - 1;
-      }
-    },
-    async getComments() {
-      try {
-        const response = await axios.get('http://localhost:3000/');
-        this.comments = response.data;
-        console.log(this.comments);
-      } catch (err) {
-        console.log(err);
+      if (this.score === this.comment.score + 1) {
+        this.score = this.score - 1;
       }
     },
   },
-  created() {
-    this.getComments();
+  mounted() {
+    console.log(this.comment);
+    this.score = this.comment.score;
   },
 };
 </script>
