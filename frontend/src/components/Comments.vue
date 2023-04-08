@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
   name: 'Comment',
   props: {
@@ -84,12 +83,19 @@ export default {
     },
     async saveComment() {
       try {
-        const reply = await axios.post('http://localhost:8080/', {
-          comment_content: this.reply.content,
-          comment_userName: 'nonowelle',
-          comment_replyTo: this.comment.user.userName,
-        });
-        console.log(reply);
+        const options = {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: this.reply.content,
+            userName: 'nonowelle',
+          }),
+        };
+        const response = await fetch('http://localhost:3000/', options);
+        const data = await response.json();
+        console.log(data);
       } catch (err) {
         console.log(err);
       }
