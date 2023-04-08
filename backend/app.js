@@ -1,35 +1,37 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const path = __dirname + '/views/';
+// app.use(express.static(path));
+// app.use(express.json());
+// app.use(bodyParser.json());
+
 const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const Comment = require('./models/comment');
-
 const app = express();
-app.use(express.json());
-app.use(cors());
+const port = 3000;
+const cors = require('cors');
+const mongoose = require('mongoose');
+const Comment = require('../backend/models/comment.js');
 
-mongoose.set('strictQuery', true);
-mongoose
-  .connect('mongodb://127.0.0.1:27017/commentSection')
-  .then(() => {
-    console.log('DB CONNECTION OPEN');
-  })
-  .catch((err) => {
-    console.log('Oh no! Error!');
-    console.log(err);
-  });
+mongoose.set('strictQuery', false);
+const mongoDB = 'mongodb://127.0.0.1:27017/commentSection';
+
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
+
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 app.get('/', async (req, res) => {
-  const comments = await Comment.find({});
-  console.log(comments);
-  res.json(comments);
+  const comments = await Comment.find();
+  res.status(200).send(comments);
 });
-app.post('/', async (req, res) => {
-  console.log(req.body);
-  //trouver a quel comment on repond
-  //ajouter un object dans le array replies de ce comment
-  //save the reply
-});
-app.listen(3000, () => {
-  console.log('APP IS LISTENING ON PORT 3000');
+
+app.listen(port, () => {
+  console.log(`Server is running on port${port}`);
 });

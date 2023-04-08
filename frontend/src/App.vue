@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <Comments
-      v-for="comment in comments"
-      :key="comment.id"
-      :comment="comment"
-    />
+    <Comment v-for="comment in comments" :key="comment.id" :comment="comment" />
     <div class="attribution">
       Challenge by
       <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
@@ -15,8 +11,8 @@
 </template>
 
 <script>
-import Comments from './components/Comments.vue';
-import axios from 'axios';
+import Comment from './components/Comments.vue';
+
 export default {
   name: 'App',
   data() {
@@ -25,21 +21,30 @@ export default {
     };
   },
   components: {
-    Comments,
+    Comment,
   },
 
   methods: {
     async getComments() {
-      try {
-        const response = await axios.get('http://localhost:3000/');
-        this.comments = response.data;
-        console.log(this.comments);
-      } catch (err) {
-        console.log(err);
-      }
+      const options = {
+        method: 'GET',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      };
+      fetch('http://localhost:3000', options)
+        .then(async (response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          this.comments = data;
+        })
+        .catch((err) => console.log('ERROR', err));
     },
   },
-  created() {
+
+  mounted() {
     this.getComments();
   },
 };

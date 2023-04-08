@@ -27,7 +27,7 @@
           <div class="comment-picture info">
             <img src="../../../images/avatars/image-juliusomo.png" alt="" />
           </div>
-          <div class="comment-author info">{{ comment.user.username }}</div>
+          <div class="comment-author info">{{ comment.user.userName }}</div>
           <div class="comment-date info">{{ comment.createdAt }}</div>
           <div class="comment-reply-cta info" v-on:click="openReplyBox">
             <svg width="14" height="13" xmlns="http://www.w3.org/2000/svg">
@@ -70,9 +70,9 @@ export default {
         content: '',
         createdAt: '',
         score: 0,
-        replyingTo: this.comment.user.username,
+        // replyingTo: this.comment.user.userName,
         user: {
-          username: '',
+          userName: '',
         },
       },
     };
@@ -84,10 +84,10 @@ export default {
     },
     async saveComment() {
       try {
-        const reply = await axios.post('http://localhost:3000/', {
+        const reply = await axios.post('http://localhost:8080/', {
           comment_content: this.reply.content,
           comment_userName: 'nonowelle',
-          comment_replyTo: this.comment.user.username,
+          comment_replyTo: this.comment.user.userName,
         });
         console.log(reply);
       } catch (err) {
@@ -113,7 +113,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.comment);
     this.score = this.comment.score;
   },
 };
