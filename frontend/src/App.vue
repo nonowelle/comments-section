@@ -69,6 +69,18 @@ body {
   font-size: 16px;
   line-height: 24px;
 }
+#app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 90px;
+
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
 
 .attribution {
   position: absolute;
