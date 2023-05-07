@@ -20,7 +20,15 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res) => {};
+exports.findOne = async (req, res) => {
+  const comment = await Comment.findById(req.params.id);
+  return comment;
+};
+
+exports.findAndModify = async (req, res) => {
+  const comment = await Comment.findAndModify(req);
+  return comment;
+};
 
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {};

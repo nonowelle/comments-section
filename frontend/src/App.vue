@@ -1,6 +1,12 @@
 <template>
   <div id="app">
-    <Comment v-for="comment in comments" :key="comment.id" :comment="comment" />
+    <Comment
+      v-for="comment in comments"
+      :key="comment.id"
+      :comment-id="comment.id"
+      :comment="comment"
+      :replies="comment.replies"
+    />
     <div class="attribution">
       Challenge by
       <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
@@ -32,13 +38,12 @@ export default {
           'Access-Control-Allow-Origin': '*',
         },
       };
-      fetch('http://localhost:3000', options)
+      fetch('http://localhost:3000/comment', options)
         .then(async (response) => {
           return response.json();
         })
-        .then((data) => {
-          console.log(data);
-          this.comments = data;
+        .then((res) => {
+          this.comments = res;
         })
         .catch((err) => console.log('ERROR', err));
     },

@@ -11,7 +11,7 @@
               />
             </svg>
           </div>
-          <div class="vote-number">{{ score }}</div>
+          <div v-if="score" class="vote-number">{{ score }}</div>
           <div class="minus" v-on:click="removeVote">
             <svg width="11" height="3" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -27,8 +27,12 @@
           <div class="comment-picture info">
             <img src="../../../images/avatars/image-juliusomo.png" alt="" />
           </div>
-          <div class="comment-author info">{{ comment.user.userName }}</div>
-          <div class="comment-date info">{{ comment.createdAt }}</div>
+          <div class="comment-author info" v-if="comment.userName">
+            {{ comment.userName }}
+          </div>
+          <div class="comment-date info" v-if="comment.createdAt">
+            {{ comment.createdAt }}
+          </div>
           <div class="comment-reply-cta info" v-on:click="openReplyBox">
             <svg width="14" height="13" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -39,37 +43,46 @@
             Reply
           </div>
         </div>
-        <div class="comment-text">
+        <div class="comment-text" v-if="comment.content">
           {{ comment.content }}
         </div>
       </div>
     </div>
-    <div class="reply-box comment-card" v-if="replyBoxIsOpened">
+    <div class="replies-container" v-if="replyBoxIsOpened">
+      <Reply :key="reply.id" class="comment-card" :comment-id="commentId" />
+    </div>
+
+    <div class="comment-box comment-card">
       <div class="comment-picture">
         <img src="../../../images/avatars/image-juliusomo.png" alt="" />
       </div>
       <input type="text" v-model="reply.content" />
-      <button v-on:click="saveCommentAndClose">REPLY</button>
+      <button v-on:click="saveComment">SEND</button>
     </div>
   </div>
 </template>
 
 <script>
+import Reply from './Replybox';
+
 export default {
   name: 'Comment',
   props: {
     comment: Object,
+    commentId: Number,
   },
+  components: { Reply },
   data: function () {
     return {
+      replies: [],
       replyBoxIsOpened: false,
       score: null,
       reply: {
-        id: Number,
+        replyId: '',
         content: '',
         createdAt: '',
         score: 0,
-        // replyingTo: this.comment.user.userName,
+        replyingTo: this.comment.userName,
         user: {
           userName: '',
         },
@@ -81,34 +94,17 @@ export default {
     openReplyBox() {
       this.replyBoxIsOpened = true;
     },
-    async saveComment() {
-      try {
-        const options = {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            content: this.reply.content,
-            userName: 'nonowelle',
-          }),
-        };
-        const response = await fetch('http://localhost:3000/', options);
-        const data = await response.json();
-        console.log(data);
-      } catch (err) {
-        console.log(err);
-      }
-    },
+
     closeComment() {
       this.replyBoxIsOpened = false;
     },
-    saveCommentAndClose() {
-      this.saveComment();
-      this.closeComment();
+    saveComment() {
+      //post request to save comment
+      console.log('posting!');
     },
+
     addVote() {
-      if (this.comment.score === this.score) {
+      if (this.comment?.score === this.score) {
         this.score = this.score + 1;
       }
     },
@@ -120,11 +116,14 @@ export default {
   },
   mounted() {
     this.score = this.comment.score;
+    console.log(this);
+    this.$on('close', () => {
+      this.closeComment();
+    });
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import '../variables';
 .comment-card {
@@ -240,13 +239,19 @@ export default {
 .comment-text {
   color: $grayish-blue;
 }
-
 .reply-box {
+  max-width: 500px;
+  margin-left: auto;
+}
+
+.reply-box,
+.comment-box {
   background-color: $white;
 
   input {
     width: 70%;
     border-radius: 8px;
+    padding: 15px;
     border: 1px solid $moderate-blue;
     cursor: pointer;
     color: $dark-blue;
@@ -266,6 +271,12 @@ export default {
     border: none;
     padding: 20px;
     cursor: pointer;
+    height: 40px;
+
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     &:active {
       background-color: $light-grayish-blue;
     }
